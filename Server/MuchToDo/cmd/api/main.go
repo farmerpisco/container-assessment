@@ -58,6 +58,7 @@ func main() {
 	logger.InitLogger(cfg)
 	slog.Info("Logger initialized", "level", cfg.LogLevel, "format", cfg.LogFormat)
 
+
 	// 2. Connect to Database
 	dbClient, err := database.ConnectMongo(cfg.MongoURI, cfg.DBName)
 	if err != nil {
