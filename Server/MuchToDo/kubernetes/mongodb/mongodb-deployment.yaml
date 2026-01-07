@@ -29,3 +29,10 @@ spec:
                 secretKeyRef:
                   name: muchtodo-secrets
                   key: mongodb-password
+          volumeMounts:
+            - name: mongodb-storage
+              mountPath: /data/db
+      volumes:
+        - name: mongodb-storage
+          persistentVolumeClaim:
+            claimName: mongodb-pvc
