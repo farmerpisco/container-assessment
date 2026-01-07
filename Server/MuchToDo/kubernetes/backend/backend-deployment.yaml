@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: muchtodo-app
+  namespace: muchtodo
+spec: 
+  replicas: 2
+  selector:
+    matchLabels:
+      app: muchtodo-app
+  template:
+    metadata:
+      labels:
+        app: muchtodo-app
+    spec:
+      containers:
+        - name: muchtodo-app
+          image: muchtodo-app:1.0 
+          imagePullPolicy: Never
+          ports: 
+            - containerPort: 8080
+          env:
+            - name: MONGO_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: muchtodo-configmap
+                  key: MONGO_URI
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: muchtodo-configmap
+                  key: DB_NAME
+          volumeMounts:
+            - name: app-logs
+              mountPath: /app/logs
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+      volumes:
+        - name: app-logs
+          emptyDir: {}
