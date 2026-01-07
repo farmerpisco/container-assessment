@@ -34,7 +34,7 @@ WORKDIR /app
 # Creat a non root user for security
 RUN addgroup -S $GN && adduser -S -G $GN $UN
 
-# Copy the app from the previous stage
+# Copy the app from the build stage
 COPY --from=builder /app/muchtodo .
 
 # change onwership of working directory
@@ -43,7 +43,7 @@ RUN chown -R $UN:$GN /app
 # Switch to the new user
 USER $UN
 
-# Tell Docker what port the container listens on at runtime for
+# Tell Docker what port the container listens on at runtime
 EXPOSE 8080
 
 # Add healthchecks
