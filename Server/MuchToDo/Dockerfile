@@ -1,21 +1,12 @@
+# Muliti-stage Dockerfile for Golang backend app
+# Stage one: Build Stage
 # Set a base image
-FROM golang:1.25.5-alpine AS builder
+FROM golang:1.25.5-alpine3.23 AS builder
 
 # Use a LABEL instruction to add a metadata for contacts
 LABEL "maintainer"="farmerpisco@gmail.com"
 
-# Created environment variable for both group and user
-ENV GN=dockergroup
-ENV UN=dockeruser
-
-# Creat a non root user for security
-RUN apk update && \
-    addgroup -S $GN && adduser -S -G $GN $UN
-
-# Switch to the new user
-USER $UN
-
-# set working directory
+# Create working directory
 WORKDIR /app
 
 # Copy dependencies' file to the working directory
@@ -30,20 +21,27 @@ COPY . .
 # Build the app
 RUN go build -o /app/muchtodo ./cmd/api
 
-# Start a multibuild stage to ensure image lightweight
-FROM alpine:latest
+# Stage two: Runtime stage
+FROM alpine:3.23
 
-# Get certifictes to support https protocol
-RUN apk --no-cache add ca-certificates wget
+# Created environment variable for both group and user
+ENV GN=goappgroup
+ENV UN=goappuser
 
 # Set working directory
 WORKDIR /app
 
+# Creat a non root user for security
+RUN addgroup -S $GN && adduser -S -G $GN $UN
+
 # Copy the app from the previous stage
 COPY --from=builder /app/muchtodo .
 
-# Add execution permission to the app
-RUN chmod +x ./muchtodo
+# change onwership of working directory
+RUN chown -R $UN:$GN /app
+
+# Switch to the new user
+USER $UN
 
 # Tell Docker what port the container listens on at runtime for
 EXPOSE 8080
