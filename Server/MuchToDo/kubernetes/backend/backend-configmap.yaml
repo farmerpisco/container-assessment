@@ -1,8 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata: 
-  name: muchtodo-configmap
-  namespace: muchtodo
-data:
-  MONGO_URI: mongodb://muchtodo:Computer2@mongodb-service:27017/?authSource=admin
-  DB_NAME: muchtodo_db
