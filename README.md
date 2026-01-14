@@ -2,23 +2,6 @@
 
 A production-ready Golang backend application with MongoDB, demonstrating containerization with Docker and orchestration with Kubernetes. This project showcases best practices for building, deploying, and managing containerized applications.
 
-## 📋 Table of Contents
-
-- [Overview](#overview)
-- [Architecture](#architecture)
-- [Prerequisites](#prerequisites)
-- [Project Structure](#project-structure)
-- [Quick Start](#quick-start)
-- [Deployment Options](#deployment-options)
-  - [Docker Deployment](#docker-deployment)
-  - [Docker Compose Deployment](#docker-compose-deployment)
-  - [Kubernetes Deployment](#kubernetes-deployment)
-- [Configuration](#configuration)
-- [API Endpoints](#api-endpoints)
-- [Monitoring and Health Checks](#monitoring-and-health-checks)
-- [Troubleshooting](#troubleshooting)
-- [Contributing](#contributing)
-
 ## 🔍 Overview
 
 MuchToDo is a containerized Golang backend application that demonstrates:
@@ -438,3 +421,4 @@ The multi-stage Dockerfile reduces image size:
 **farmerpisco**
 - Email: farmerpisco@gmail.com
 - GitHub: [@farmerpisco](https://github.com/farmerpisco)
+
