@@ -1,7 +1,7 @@
 # Muliti-stage Dockerfile for Golang backend app
 # Stage one: Build Stage
 # Set a base image
-FROM golang:1.25.5-alpine3.23 AS builder
+FROM golang:1.25.6-alpine3.23 AS builder
 
 # Use a LABEL instruction to add a metadata for contacts
 LABEL "maintainer"="farmerpisco@gmail.com"
