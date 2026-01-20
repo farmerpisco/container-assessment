@@ -2,23 +2,6 @@
 
 A production-ready Golang backend application with MongoDB, demonstrating containerization with Docker and orchestration with Kubernetes. This project showcases best practices for building, deploying, and managing containerized applications.
 
-## 📋 Table of Contents
-
-- [Overview](#overview)
-- [Architecture](#architecture)
-- [Prerequisites](#prerequisites)
-- [Project Structure](#project-structure)
-- [Quick Start](#quick-start)
-- [Deployment Options](#deployment-options)
-  - [Docker Deployment](#docker-deployment)
-  - [Docker Compose Deployment](#docker-compose-deployment)
-  - [Kubernetes Deployment](#kubernetes-deployment)
-- [Configuration](#configuration)
-- [API Endpoints](#api-endpoints)
-- [Monitoring and Health Checks](#monitoring-and-health-checks)
-- [Troubleshooting](#troubleshooting)
-- [Contributing](#contributing)
-
 ## 🔍 Overview
 
 MuchToDo is a containerized Golang backend application that demonstrates:
@@ -89,12 +72,12 @@ MuchToDo is a containerized Golang backend application that demonstrates:
 
 ```
 container-assessment/
-├── application-code/        # Golang application source code
+├── application-code/        
 │   ├── cmd/
-│   │   └── api/            # Main application entry point
-│   ├── go.mod              # Go module dependencies
-│   └── go.sum              # Go module checksums
-├── kubernetes/             # Kubernetes manifest files
+│   │   └── api/            
+│   ├── go.mod             
+│   └── go.sum            
+├── kubernetes/          
 │   ├── backend/
 │   │   ├── backend-configmap.yaml
 │   │   ├── backend-deployment.yaml
@@ -106,16 +89,16 @@ container-assessment/
 │   │   └── mongodb-service.yaml
 │   ├── ingress.yaml
 │   └── namespace.yaml
-├── scripts/                # Automation scripts
-│   ├── docker-deploy.sh    # Docker deployment script
+├── scripts/                
+│   ├── docker-deploy.sh   
 │   ├── docker-compose-deploy.sh
-│   ├── k8s-deploy.sh       # Kubernetes deployment
-│   └── k8s-cleanup.sh      # Kubernetes cleanup
-├── Dockerfile              # Multi-stage Docker build
-├── docker-compose.yaml     # Docker Compose configuration
-├── docker-compose.env.example  # Environment variables template
-├── .dockerignore          # Docker build exclusions
-└── .gitignore             # Git exclusions
+│   ├── k8s-deploy.sh       
+│   └── k8s-cleanup.sh    
+├── Dockerfile              
+├── docker-compose.yaml    
+├── docker-compose.env.example  
+├── .dockerignore         
+└── .gitignore         
 ```
 
 ## 🚀 Quick Start
@@ -267,32 +250,6 @@ docker compose down -v
 
 **Recommended for production** - Full orchestration with scaling, persistence, and ingress.
 
-#### Prerequisites
-
-```bash
-# Start Minikube (if using Minikube)
-minikube start --cpus=2 --memory=4096
-
-# Enable Ingress addon
-minikube addons enable ingress
-
-# Verify cluster
-kubectl cluster-info
-```
-
-#### Build Image for Kubernetes
-
-```bash
-# For Minikube, use Minikube's Docker daemon
-eval $(minikube docker-env)
-
-# Build image
-docker build -t muchtodo-app:1.0 -f Dockerfile .
-
-# Verify image
-docker images | grep muchtodo-app
-```
-
 #### Deploy to Kubernetes
 
 ```bash
@@ -334,7 +291,7 @@ kubectl apply -f kubernetes/ingress.yaml
 Add to `/etc/hosts` (Linux/Mac) or `C:\Windows\System32\drivers\etc\hosts` (Windows):
 
 ```bash
-# Get Minikube IP
+# Get Machind IP
 minikube ip
 
 # Add entry (replace <MINIKUBE_IP> with actual IP)
@@ -409,8 +366,8 @@ kubectl delete namespace muchtodo
 Create `docker-compose.env`:
 
 ```env
-DB_NAME=muchtodo_db
-MONGO_USERNAME=muchtodo
+DB_NAME=YourDbName
+MONGO_USERNAME=YourUsername
 MONGO_PASSWORD=SecurePassword123!
 MONGODB_SERVER=mongodb
 ```
@@ -421,89 +378,14 @@ MongoDB credentials are base64 encoded in `mongodb-secret.yaml`:
 
 ```bash
 # Encode credentials
-echo -n "muchtodo" | base64
-# Output: bXVjaHRvZG8=
+echo -n "YourUsername" | base64
+# Output: 
 
-echo -n "Computer2" | base64
-# Output: Q29tcHV0ZXIy
+echo -n "SecurePassword" | base64
+# Output: 
 ```
 
 **⚠️ Security Warning**: The current secrets are examples. Generate new credentials for production:
-
-```bash
-# Generate secure password
-openssl rand -base64 32
-
-# Encode for Kubernetes
-echo -n "your-new-password" | base64
-```
-
-Update `kubernetes/mongodb/mongodb-secret.yaml` and `kubernetes/backend/backend-configmap.yaml` accordingly.
-
----
-
-## 🔌 API Endpoints
-
-### Health Check
-
-```bash
-curl http://localhost:8082/health
-```
-
-**Response:**
-```json
-{
-  "status": "healthy"
-}
-```
-
-### Additional Endpoints
-
-Documentation for additional API endpoints should be added based on your application's functionality.
-
----
-
-## 📊 Monitoring and Health Checks
-
-### Docker Health Checks
-
-The Dockerfile includes built-in health checks:
-
-```dockerfile
-HEALTHCHECK --interval=30s --timeout=30s --retries=3 \
-  CMD wget -qO- http://localhost:8080/health || exit 1
-```
-
-Check container health:
-
-```bash
-docker ps
-# Look for health status in STATUS column
-```
-
-### Kubernetes Probes
-
-#### Liveness Probe
-Restarts pod if unhealthy:
-```yaml
-livenessProbe:
-  httpGet:
-    path: /health
-    port: 8080
-  initialDelaySeconds: 15
-  periodSeconds: 10
-```
-
-#### Readiness Probe
-Removes pod from service if not ready:
-```yaml
-readinessProbe:
-  httpGet:
-    path: /health
-    port: 8080
-  initialDelaySeconds: 5
-  periodSeconds: 5
-```
 
 ### View Logs
 
@@ -525,145 +407,6 @@ kubectl logs deployment/muchtodo-app -n muchtodo
 kubectl logs -f deployment/muchtodo-app -n muchtodo  # Follow logs
 ```
 
----
-
-## 🔧 Troubleshooting
-
-### Common Issues
-
-#### 1. Port Already in Use
-
-**Error:** `bind: address already in use`
-
-**Solution:**
-```bash
-# Find process using port
-lsof -i :8082  # Linux/Mac
-netstat -ano | findstr :8082  # Windows
-
-# Kill process or change port in docker-compose.yaml
-```
-
-#### 2. MongoDB Connection Failed
-
-**Symptoms:** Application crashes or can't connect to database
-
-**Solutions:**
-```bash
-# Docker Compose: Check MongoDB is running
-docker compose ps
-
-# Kubernetes: Check MongoDB pod
-kubectl get pods -n muchtodo
-kubectl logs deployment/mongodb -n muchtodo
-
-# Verify connection string format
-# Should be: mongodb://username:password@host:27017/?authSource=admin
-```
-
-#### 3. Image Pull Policy Error (Kubernetes)
-
-**Error:** `ErrImagePull` or `ImagePullBackOff`
-
-**Solution:**
-```bash
-# Ensure image exists locally
-docker images | grep muchtodo-app
-
-# Rebuild if necessary
-eval $(minikube docker-env)
-docker build -t muchtodo-app:1.0 -f Dockerfile .
-```
-
-#### 4. Ingress Not Working
-
-**Symptoms:** `curl http://muchtodo.local` fails
-
-**Solutions:**
-```bash
-# Check Ingress addon (Minikube)
-minikube addons list
-
-# Enable if disabled
-minikube addons enable ingress
-
-# Verify Ingress controller
-kubectl get pods -n ingress-nginx
-
-# Check Ingress resource
-kubectl describe ingress muchtodo-ingress -n muchtodo
-
-# Verify /etc/hosts entry
-cat /etc/hosts | grep muchtodo.local
-```
-
-#### 5. Persistent Volume Issues
-
-**Error:** Pod pending due to PVC
-
-**Solution:**
-```bash
-# Check PVC status
-kubectl get pvc -n muchtodo
-
-# Describe PVC for details
-kubectl describe pvc mongodb-pvc -n muchtodo
-
-# For Minikube, ensure storage provisioner is enabled
-minikube addons enable storage-provisioner
-```
-
-### Debug Commands
-
-```bash
-# Docker: Inspect container
-docker inspect muchtodo-app
-
-# Docker: Execute shell in container
-docker exec -it muchtodo-app sh
-
-# Kubernetes: Execute shell in pod
-kubectl exec -it deployment/muchtodo-app -n muchtodo -- sh
-
-# Kubernetes: Describe resources
-kubectl describe pod <pod-name> -n muchtodo
-kubectl describe deployment muchtodo-app -n muchtodo
-
-# Check events
-kubectl get events -n muchtodo --sort-by='.lastTimestamp'
-```
-
----
-
-## 🛡️ Security Best Practices
-
-### Implemented Security Features
-
-1. **Non-root User**: Application runs as non-root user in container
-2. **Secret Management**: Credentials stored in Kubernetes secrets
-3. **Health Checks**: Automated health monitoring
-4. **Resource Limits**: Define CPU/memory limits in production
-5. **Network Isolation**: Services communicate through defined networks
-
-### Production Recommendations
-
-1. **Update Secrets**: Change default MongoDB credentials
-2. **Enable TLS**: Configure SSL/TLS for MongoDB connections
-3. **Scan Images**: Use `docker scan` or Trivy for vulnerability scanning
-4. **Image Registry**: Push images to private registry (Docker Hub, ECR, GCR)
-5. **RBAC**: Implement Kubernetes Role-Based Access Control
-6. **Network Policies**: Restrict pod-to-pod communication
-
-```bash
-# Scan Docker image
-docker scan muchtodo-app:latest
-
-# Or use Trivy
-trivy image muchtodo-app:latest
-```
-
----
-
 ## 📈 Performance Optimization
 
 ### Docker Image Optimization
@@ -673,73 +416,9 @@ The multi-stage Dockerfile reduces image size:
 - **Runtime stage**: Alpine Linux only (~15MB)
 - **Final image**: ~25MB (vs ~815MB single-stage)
 
-### Kubernetes Resource Management
-
-Add resource limits to `backend-deployment.yaml`:
-
-```yaml
-resources:
-  requests:
-    memory: "128Mi"
-    cpu: "100m"
-  limits:
-    memory: "256Mi"
-    cpu: "500m"
-```
-
----
-
-## 🤝 Contributing
-
-### Development Workflow
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/amazing-feature`
-3. Make your changes
-4. Test locally with Docker Compose
-5. Commit changes: `git commit -m 'Add amazing feature'`
-6. Push to branch: `git push origin feature/amazing-feature`
-7. Open a Pull Request
-
-### Code Standards
-
-- Follow Go best practices and formatting (`go fmt`)
-- Update documentation for new features
-- Include tests for new functionality
-- Update Kubernetes manifests if needed
-
----
-
-## 📝 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
----
-
 ## 👤 Author
 
 **farmerpisco**
 - Email: farmerpisco@gmail.com
 - GitHub: [@farmerpisco](https://github.com/farmerpisco)
 
----
-
-## 🙏 Acknowledgments
-
-- Golang team for excellent documentation
-- Docker for containerization platform
-- Kubernetes community for orchestration tools
-- MongoDB for database solution
-
----
-
-## 📚 Additional Resources
-
-- [Docker Documentation](https://docs.docker.com/)
-- [Kubernetes Documentation](https://kubernetes.io/docs/)
-- [Go Documentation](https://golang.org/doc/)
-- [MongoDB Documentation](https://docs.mongodb.com/)
-
----
-
-**Last Updated**: January 2026
